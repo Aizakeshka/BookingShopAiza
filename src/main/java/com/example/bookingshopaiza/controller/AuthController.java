@@ -1,38 +1,28 @@
 package com.example.bookingshopaiza.controller;
 
-import com.example.bookingshopaiza.dto.AuthRequest;
-import com.example.bookingshopaiza.dto.AuthResponse;
-import com.example.bookingshopaiza.security.JwtUtil;
+import com.example.bookingshopaiza.dto.LoginDto;
+import com.example.bookingshopaiza.dto.RegisterDto;
+import com.example.bookingshopaiza.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
+    private final AuthService authService;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
+        return ResponseEntity.ok(authService.register(registerDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()));
-
-        String jwt = jwtUtil.generateToken(request.getEmail());
-        return ResponseEntity.ok(new AuthResponse(jwt));
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+        return ResponseEntity.ok(authService.login(loginDto));
     }
 }

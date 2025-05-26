@@ -9,5 +9,4 @@ class BookingShopAizaApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
